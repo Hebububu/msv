@@ -1,0 +1,34 @@
+[package]
+name = "mermaid-svg-render"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Parse and render Mermaid diagrams to SVG in pure Rust"
+repository = "https://github.com/Hebububu/msv"
+homepage = "https://github.com/Hebububu/msv"
+documentation = "https://docs.rs/mermaid-svg-render"
+readme = "README.md"
+keywords = ["mermaid", "diagram", "svg", "render", "visualization"]
+categories = ["visualization", "command-line-utilities"]
+rust-version = "1.70.0"
+
+[features]
+default = []
+cli = ["clap", "colored"]
+
+[dependencies]
+mermaid-parser = { git = "https://github.com/wballard/mermaid_parser", package = "mermaid-parser" }
+svg = "0.18.0"
+
+# CLI dependencies (optional)
+clap = { version = "4.5", features = ["derive"], optional = true }
+colored = { version = "2.2", optional = true }
+
+[dev-dependencies]
+regex = "1.12.2"
+rstest = "0.21"
+
+[[bin]]
+name = "msv"
+path = "src/bin/msv.rs"
+required-features = ["cli"]
