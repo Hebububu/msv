@@ -2,7 +2,10 @@
 
 use mermaid_parser::common::ast::{Participant, SequenceDiagram, SequenceStatement};
 
-use crate::layout::{split_by_line_breaks, text_width, ContentBounds};
+use crate::layout::{
+    calculate_text_box_height, calculate_text_box_width, split_by_line_breaks, text_width,
+    ContentBounds,
+};
 
 use super::constants::*;
 use super::types::{Layout, ParticipantLayout};
@@ -148,21 +151,13 @@ fn get_participant_lines(participant: &Participant) -> Vec<String> {
 
 /// Calculate participant box width based on widest line
 fn calculate_participant_width(lines: &[String], font_size: u32) -> f64 {
-    let max_line_width = lines
-        .iter()
-        .map(|line| text_width(line, font_size))
-        .fold(0.0_f64, f64::max);
-    (max_line_width + PARTICIPANT_PADDING).max(MIN_PARTICIPANT_WIDTH)
+    calculate_text_box_width(lines, font_size, PARTICIPANT_PADDING).max(MIN_PARTICIPANT_WIDTH)
 }
 
 /// Calculate participant box height based on number of lines
 fn calculate_participant_height(num_lines: usize) -> f64 {
-    let text_height = if num_lines == 0 {
-        LINE_HEIGHT
-    } else {
-        (num_lines as f64) * LINE_HEIGHT
-    };
-    (text_height + PARTICIPANT_VERTICAL_PADDING).max(MIN_PARTICIPANT_HEIGHT)
+    calculate_text_box_height(num_lines, LINE_HEIGHT, PARTICIPANT_VERTICAL_PADDING)
+        .max(MIN_PARTICIPANT_HEIGHT)
 }
 
 /// Calculate all participant widths and heights

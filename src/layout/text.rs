@@ -78,6 +78,43 @@ pub fn split_by_line_breaks(text: &str) -> Vec<String> {
         .collect()
 }
 
+/// Calculates the width of a text box containing multiple lines
+///
+/// Finds the widest line and adds horizontal padding.
+///
+/// # Arguments
+///
+/// * `lines` - Lines of text to measure
+/// * `font_size` - Font size in pixels
+/// * `padding` - Total horizontal padding (both sides combined)
+///
+/// # Returns
+///
+/// Width in pixels (max line width + padding)
+pub fn calculate_text_box_width(lines: &[String], font_size: u32, padding: f64) -> f64 {
+    let max_line_width = lines
+        .iter()
+        .map(|line| text_width(line, font_size))
+        .fold(0.0_f64, f64::max);
+    max_line_width + padding
+}
+
+/// Calculates the height of a text box containing multiple lines
+///
+/// # Arguments
+///
+/// * `num_lines` - Number of text lines (minimum 1 for empty content)
+/// * `line_height` - Height per line in pixels
+/// * `padding` - Total vertical padding (top + bottom combined)
+///
+/// # Returns
+///
+/// Height in pixels (lines * line_height + padding)
+pub fn calculate_text_box_height(num_lines: usize, line_height: f64, padding: f64) -> f64 {
+    let effective_lines = if num_lines == 0 { 1 } else { num_lines };
+    (effective_lines as f64) * line_height + padding
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -117,5 +154,52 @@ mod tests {
     fn test_split_by_line_breaks_trims() {
         let lines = split_by_line_breaks("  Hello  <br>  World  ");
         assert_eq!(lines, vec!["Hello", "World"]);
+    }
+
+    #[test]
+    fn test_text_box_width_single_line() {
+        let lines = vec!["Hello".to_string()];
+        let width = calculate_text_box_width(&lines, 14, 20.0);
+        // Width should be text width + padding
+        let text_w = text_width("Hello", 14);
+        assert!((width - (text_w + 20.0)).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_text_box_width_uses_widest_line() {
+        let lines = vec![
+            "Hi".to_string(),
+            "Hello World".to_string(),
+            "Hey".to_string(),
+        ];
+        let width = calculate_text_box_width(&lines, 14, 20.0);
+        let widest = text_width("Hello World", 14);
+        assert!((width - (widest + 20.0)).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_text_box_width_empty_lines() {
+        let lines: Vec<String> = vec![];
+        let width = calculate_text_box_width(&lines, 14, 20.0);
+        // Empty lines should return just padding
+        assert!((width - 20.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_text_box_height_single_line() {
+        let height = calculate_text_box_height(1, 18.0, 16.0);
+        assert!((height - 34.0).abs() < 0.001); // 1 * 18 + 16
+    }
+
+    #[test]
+    fn test_text_box_height_multiple_lines() {
+        let height = calculate_text_box_height(3, 18.0, 16.0);
+        assert!((height - 70.0).abs() < 0.001); // 3 * 18 + 16
+    }
+
+    #[test]
+    fn test_text_box_height_zero_lines_defaults_to_one() {
+        let height = calculate_text_box_height(0, 18.0, 16.0);
+        assert!((height - 34.0).abs() < 0.001); // 1 * 18 + 16
     }
 }
