@@ -2,6 +2,17 @@
 
 Parse and render Mermaid diagrams to SVG in pure Rust.
 
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Library Usage](#library-usage)
+- [CLI Usage](#cli-usage)
+- [Supported Diagram Types](#supported-diagram-types)
+- [Documentation](#documentation)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+
 ## Features
 
 - **Pure Rust** - No JavaScript, no npm/node dependencies
@@ -185,6 +196,12 @@ The parser ([mermaid-parser](https://github.com/wballard/mermaid_parser)) suppor
 | **Critical blocks** | `critical`/`end` | Planned |
 | **Activation** | `activate A` | Planned |
 | **Create/Destroy** | `create`/`destroy` | Planned |
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Sequence Diagram Implementation](docs/diagrams/sequence.md) | Detailed status of sequence diagram features, parser AST structures, and rendering requirements |
 
 ## License
 
